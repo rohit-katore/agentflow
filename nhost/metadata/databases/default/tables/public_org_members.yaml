@@ -1,0 +1,64 @@
+table:
+  name: org_members
+  schema: public
+object_relationships:
+  - name: organization
+    using:
+      foreign_key_constraint_on: org_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+            role:
+              _eq: owner
+      columns:
+        - org_id
+        - user_id
+        - role
+        - member_email
+    comment: Only an owner of the org can add members (editors cannot)
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - org_id
+        - user_id
+        - role
+        - member_email
+        - created_at
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+    comment: Members can see the roster of their own orgs only
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - role
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+            role:
+              _eq: owner
+      check: {}
+    comment: Only owners can change roles
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+            role:
+              _eq: owner
+    comment: Only owners can remove members

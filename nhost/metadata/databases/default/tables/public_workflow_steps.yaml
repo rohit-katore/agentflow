@@ -1,0 +1,105 @@
+table:
+  name: workflow_steps
+  schema: public
+object_relationships:
+  - name: workflow
+    using:
+      foreign_key_constraint_on: workflow_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        _and:
+          - workflow:
+              organization:
+                members:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+                  role:
+                    _in:
+                      - owner
+                      - editor
+          - _or:
+              - type:
+                  _nin:
+                    - db_write
+                    - notify
+              - workflow:
+                  organization:
+                    members:
+                      user_id:
+                        _eq: X-Hasura-User-Id
+                      role:
+                        _eq: owner
+      columns:
+        - workflow_id
+        - step_order
+        - type
+        - name
+        - config
+    comment: 'Layer 1: owner/editor in the org. Layer 2: db_write and notify steps are owner-only'
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - workflow_id
+        - step_order
+        - type
+        - name
+        - config
+        - created_at
+        - updated_at
+      filter:
+        workflow:
+          organization:
+            members:
+              user_id:
+                _eq: X-Hasura-User-Id
+    comment: Layer 1 - org members can read steps
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - step_order
+        - type
+        - name
+        - config
+      filter:
+        workflow:
+          organization:
+            members:
+              user_id:
+                _eq: X-Hasura-User-Id
+              role:
+                _in:
+                  - owner
+                  - editor
+      check:
+        _or:
+          - type:
+              _nin:
+                - db_write
+                - notify
+          - workflow:
+              organization:
+                members:
+                  user_id:
+                    _eq: X-Hasura-User-Id
+                  role:
+                    _eq: owner
+    comment: 'The post-update check stops an editor from turning a step into db_write/notify'
+delete_permissions:
+  - role: user
+    permission:
+      filter:
+        workflow:
+          organization:
+            members:
+              user_id:
+                _eq: X-Hasura-User-Id
+              role:
+                _in:
+                  - owner
+                  - editor
+    comment: Owners and editors can remove steps

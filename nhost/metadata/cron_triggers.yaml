@@ -1,0 +1,14 @@
+- name: workflow-scheduler
+  webhook: '{{NHOST_FUNCTIONS_URL}}/cron/scheduler'
+  schedule: '* * * * *'
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 1
+    retry_interval_seconds: 10
+    timeout_seconds: 120
+    tolerance_seconds: 21600
+  headers:
+    - name: x-nhost-webhook-secret
+      value_from_env: NHOST_WEBHOOK_SECRET
+  comment: Checks cron-based workflow triggers once a minute and fires the due ones

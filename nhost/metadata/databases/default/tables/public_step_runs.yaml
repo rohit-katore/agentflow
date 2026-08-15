@@ -1,0 +1,38 @@
+table:
+  name: step_runs
+  schema: public
+object_relationships:
+  - name: run
+    using:
+      foreign_key_constraint_on: run_id
+  - name: step
+    using:
+      foreign_key_constraint_on: step_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - run_id
+        - step_id
+        - step_order
+        - step_type
+        - step_name
+        - config
+        - status
+        - input
+        - output
+        - error
+        - attempts
+        - approved_by
+        - approved_at
+        - started_at
+        - finished_at
+        - created_at
+      filter:
+        run:
+          organization:
+            members:
+              user_id:
+                _eq: X-Hasura-User-Id
+    comment: Live progress subscription reads this; writes happen only through the engine

@@ -1,0 +1,48 @@
+type Mutation {
+  triggerWorkflowRun(workflow_id: uuid!, payload: jsonb): TriggerWorkflowRunOutput!
+}
+
+type Mutation {
+  approveStep(step_run_id: uuid!, decision: String!, comment: String): ApproveStepOutput!
+}
+
+type Mutation {
+  ingestWebhook(webhook_key: String!, payload: jsonb): IngestWebhookOutput!
+}
+
+type Mutation {
+  addOrgMember(org_id: uuid!, email: String!, role: String!): AddOrgMemberOutput!
+}
+
+type Mutation {
+  revealWebhookKey(trigger_id: uuid!): RevealWebhookKeyOutput!
+}
+
+scalar uuid
+
+scalar jsonb
+
+type TriggerWorkflowRunOutput {
+  run_id: uuid!
+  status: String!
+}
+
+type ApproveStepOutput {
+  run_id: uuid!
+  status: String!
+}
+
+type IngestWebhookOutput {
+  run_id: uuid
+  status: String!
+}
+
+type AddOrgMemberOutput {
+  member_id: uuid!
+  user_id: uuid!
+}
+
+type RevealWebhookKeyOutput {
+  webhook_key: String!
+  webhook_url: String!
+}

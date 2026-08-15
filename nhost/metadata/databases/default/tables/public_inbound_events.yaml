@@ -1,0 +1,63 @@
+table:
+  name: inbound_events
+  schema: public
+object_relationships:
+  - name: organization
+    using:
+      foreign_key_constraint_on: org_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+            role:
+              _in:
+                - owner
+                - editor
+      set:
+        created_by: x-hasura-User-Id
+      columns:
+        - org_id
+        - source
+        - payload
+    comment: Owners/editors can insert rows into the watched table (viewers cannot start runs this way either)
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - org_id
+        - source
+        - payload
+        - created_by
+        - created_at
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+    comment: Org-scoped reads
+event_triggers:
+  - name: inbound_event_created
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 15
+      num_retries: 2
+      timeout_sec: 120
+    webhook: '{{NHOST_FUNCTIONS_URL}}/hooks/inbound-event'
+    headers:
+      - name: x-nhost-webhook-secret
+        value_from_env: NHOST_WEBHOOK_SECRET
+    cleanup_config:
+      batch_size: 10000
+      clean_invocation_logs: false
+      clear_older_than: 168
+      paused: true
+      schedule: 0 0 * * *
+      timeout: 60

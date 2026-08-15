@@ -1,0 +1,70 @@
+actions:
+  - name: addOrgMember
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/workflows/add-member'
+      forward_client_headers: true
+      headers:
+        - name: x-nhost-webhook-secret
+          value_from_env: NHOST_WEBHOOK_SECRET
+    permissions:
+      - role: user
+    comment: Resolves an email to a user and upserts the membership; handler enforces owner-only
+  - name: approveStep
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/workflows/approve'
+      timeout: 120
+      forward_client_headers: true
+      headers:
+        - name: x-nhost-webhook-secret
+          value_from_env: NHOST_WEBHOOK_SECRET
+    permissions:
+      - role: user
+    comment: Approves or rejects a paused approval_gate step; the handler checks the approver's role mid-execution
+  - name: ingestWebhook
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/workflows/webhook'
+      timeout: 120
+      forward_client_headers: true
+      headers:
+        - name: x-nhost-webhook-secret
+          value_from_env: NHOST_WEBHOOK_SECRET
+    permissions:
+      - role: public
+      - role: user
+    comment: Inbound endpoint for external systems; the secret webhook key is the credential
+  - name: revealWebhookKey
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/workflows/reveal-key'
+      forward_client_headers: true
+      headers:
+        - name: x-nhost-webhook-secret
+          value_from_env: NHOST_WEBHOOK_SECRET
+    permissions:
+      - role: user
+    comment: Returns the webhook URL for a trigger to owners/editors of that org only
+  - name: triggerWorkflowRun
+    definition:
+      kind: synchronous
+      handler: '{{NHOST_FUNCTIONS_URL}}/workflows/trigger'
+      timeout: 120
+      forward_client_headers: true
+      headers:
+        - name: x-nhost-webhook-secret
+          value_from_env: NHOST_WEBHOOK_SECRET
+    permissions:
+      - role: user
+    comment: Starts a run after org-role and quota checks, then executes steps in order
+custom_types:
+  enums: []
+  input_objects: []
+  objects:
+    - name: TriggerWorkflowRunOutput
+    - name: ApproveStepOutput
+    - name: IngestWebhookOutput
+    - name: AddOrgMemberOutput
+    - name: RevealWebhookKeyOutput
+  scalars: []

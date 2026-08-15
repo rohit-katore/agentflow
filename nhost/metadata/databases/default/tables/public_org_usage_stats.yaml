@@ -1,0 +1,31 @@
+table:
+  name: org_usage_stats
+  schema: public
+object_relationships:
+  - name: organization
+    using:
+      manual_configuration:
+        column_mapping:
+          org_id: id
+        insertion_order: null
+        remote_table:
+          name: organizations
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - org_id
+        - quota_limit
+        - quota_used
+        - quota_period_start
+        - runs_this_month
+        - completed_this_month
+        - failed_this_month
+        - avg_run_seconds_this_month
+      filter:
+        organization:
+          members:
+            user_id:
+              _eq: X-Hasura-User-Id
+    comment: Monthly usage/average-duration aggregation, scoped to the caller's orgs
