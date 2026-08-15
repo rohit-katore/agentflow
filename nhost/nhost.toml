@@ -1,0 +1,62 @@
+[global]
+
+[hasura]
+adminSecret = '{{ secrets.HASURA_GRAPHQL_ADMIN_SECRET }}'
+webhookSecret = '{{ secrets.NHOST_WEBHOOK_SECRET }}'
+
+[[hasura.jwtSecrets]]
+type = 'HS256'
+key = '{{ secrets.HASURA_GRAPHQL_JWT_SECRET }}'
+
+[hasura.settings]
+corsDomain = ['*']
+devMode = true
+enableAllowList = false
+enableConsole = true
+enableRemoteSchemaPermissions = false
+enabledAPIs = ['metadata', 'graphql', 'pgdump', 'config']
+inferFunctionPermissions = true
+
+[hasura.logs]
+level = 'warn'
+
+[hasura.events]
+httpPoolSize = 100
+
+[functions]
+[functions.node]
+version = 20
+
+[auth]
+[auth.redirections]
+clientUrl = 'http://localhost:3000'
+allowedUrls = ['http://localhost:3000', 'https://*.vercel.app']
+
+[auth.signUp]
+enabled = true
+
+[auth.method]
+[auth.method.anonymous]
+enabled = false
+
+[auth.method.emailPassword]
+hibpEnabled = false
+emailVerificationRequired = false
+passwordMinLength = 9
+
+[auth.session]
+[auth.session.accessToken]
+expiresIn = 900
+
+[auth.session.refreshToken]
+expiresIn = 2592000
+
+[postgres]
+
+[provider]
+
+[storage]
+
+[observability]
+[observability.grafana]
+adminPassword = '{{ secrets.GRAFANA_ADMIN_PASSWORD }}'

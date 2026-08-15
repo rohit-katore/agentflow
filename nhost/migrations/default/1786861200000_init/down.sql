@@ -1,0 +1,14 @@
+drop view if exists public.org_usage_stats;
+drop table if exists public.inbound_events;
+drop table if exists public.notifications;
+drop table if exists public.artifacts;
+drop table if exists public.step_runs;
+drop table if exists public.workflow_runs;
+drop table if exists public.workflow_triggers;
+drop table if exists public.workflow_steps;
+drop table if exists public.workflows;
+drop trigger if exists organizations_creator_owner on public.organizations;
+drop function if exists public.org_creator_becomes_owner();
+drop table if exists public.org_members;
+drop table if exists public.organizations;
+drop function if exists public.set_updated_at();

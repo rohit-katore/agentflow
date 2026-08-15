@@ -1,0 +1,17 @@
+{
+  "name": "agentflow",
+  "private": true,
+  "description": "AI agent workflow builder on nhost (Postgres + Hasura + Auth + Functions)",
+  "scripts": {
+    "typecheck:functions": "tsc --noEmit -p functions/tsconfig.json"
+  },
+  "dependencies": {
+    "cron-parser": "^4.9.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5.4"
+  }
+}
