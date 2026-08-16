@@ -9,3 +9,4 @@
 - '!include public_notifications.yaml'
 - '!include public_inbound_events.yaml'
 - '!include public_org_usage_stats.yaml'
+- '!include auth_users.yaml'

@@ -1,0 +1,8 @@
+table:
+  name: users
+  schema: auth
+configuration:
+  custom_name: users
+  custom_root_fields:
+    select: users
+    select_by_pk: user
